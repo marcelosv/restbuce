@@ -16,12 +16,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import com.br.restbuce.annotations.IgnoreRest;
+import com.br.restbuce.interceptor.ContextStatic;
 import com.br.restbuce.interceptor.RestClass;
 import com.br.restbuce.repository.RestRepository;
 
 @Configuration
 @EnableAutoConfiguration
-@ImportAutoConfiguration(RestClass.class)
+@ImportAutoConfiguration(value={RestClass.class, ContextStatic.class})
 public class RestBuceConfig {
 
 	@Bean

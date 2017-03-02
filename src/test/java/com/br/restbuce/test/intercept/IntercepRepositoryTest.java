@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.br.restbuce.args.ArgEntity;
 import com.br.restbuce.args.ArgPathParam;
+import com.br.restbuce.args.ArgQueryParam;
 import com.br.restbuce.config.RestBuceConfig;
 import com.br.restbuce.interceptor.ContextStatic;
 import com.br.restbuce.test.TestApplication;
@@ -29,7 +30,18 @@ public class IntercepRepositoryTest {
 
 	@Autowired
 	private RepositoryLocal repositoryLocal2;
+	
+	@Test
+	public void testInterceptQuery() {
 
+		ArgQueryParam args = new ArgQueryParam<String>();
+		args.add("field", "fieldtrue");
+		
+		String endPoint = repositoryLocal2.test6(args);
+		
+		Assert.assertEquals("fieldtrue", endPoint);
+	}
+	
 	@Test
 	public void testIntercept() {
 

@@ -1,5 +1,8 @@
 package com.br.restbuce.interceptor;
 
+import java.lang.reflect.Method;
+
+import com.br.restbuce.annotations.ExternalRest;
 import com.br.restbuce.annotations.Rest;
 import com.br.restbuce.args.ArgPathParam;
 import com.br.restbuce.exceptions.InvalidArgsPathParamException;
@@ -9,17 +12,32 @@ public class ProcessLink extends ProcessAbstract implements ProcessExecute<Strin
 	private String host;
 	private Rest rest;
 	private Object[] args;
+	private Method method;
 
-	public ProcessLink(String host, Rest rest, Object[] args) {
+	public ProcessLink(String host, Rest rest, Object[] args, Method method) {
 		this.host = host;
 		this.rest = rest;
 		this.args = args;
+		this.method = method;
 	}
 
 	@Override
 	public String execute() {
+		
+		if( isExternalRest() ){
+			return pŕocessExternalRest();
+		}
+		
 		String link = processLink();
 		return processArgs(link);
+	}
+
+	private String pŕocessExternalRest() {
+		return rest.endPoint();
+	}
+
+	private boolean isExternalRest() {
+		return method.isAnnotationPresent(ExternalRest.class);
 	}
 
 	@SuppressWarnings("rawtypes")

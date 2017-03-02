@@ -8,7 +8,7 @@ public class RestBuceException extends RuntimeException {
 	private static final long serialVersionUID = -2110508363954264484L;
 	
 	public RestBuceException(HttpClientErrorException ex) {
-		super(ex);
+		super(ex.getResponseBodyAsString() == null ? ex.getMessage(): ex.getResponseBodyAsString(), ex);
 	}
 
 	public HttpStatus getStatusCode() {

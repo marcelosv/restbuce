@@ -1,17 +1,21 @@
 package com.br.restbuce.test.intercept;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 
+import com.br.restbuce.annotations.ExternalRest;
 import com.br.restbuce.annotations.IgnoreRest;
 import com.br.restbuce.annotations.Rest;
 import com.br.restbuce.args.ArgEntity;
 import com.br.restbuce.args.ArgHeader;
 import com.br.restbuce.args.ArgPathParam;
 import com.br.restbuce.args.ArgQueryParam;
+import com.br.restbuce.component.HeadersInjectRequest;
 import com.br.restbuce.exceptions.InvalidArgEntityException;
 import com.br.restbuce.exceptions.InvalidArgHeaderException;
 import com.br.restbuce.exceptions.InvalidArgQueryParamException;
@@ -61,7 +65,99 @@ public class ProcessRestTest {
 		
 		@Rest(endPoint="/endpoint3/", method=HttpMethod.GET)
 		String method12(ArgHeader<String> args, ArgHeader<String> args2);
+		
+		@ExternalRest
+		@Rest(endPoint="www.google.com.br", method=HttpMethod.GET)
+		String method13();
 	}
+	
+	@Test
+	public void testExternalRest() throws NoSuchMethodException, SecurityException{
+		Method method = TestRest.class.getMethod("method13");
+		
+		ProcessRest processRest = new ProcessRest(HOST, method, null, null);
+		Assert.assertNotNull(processRest.getLink());
+		Assert.assertEquals("www.google.com.br", processRest.getLink());
+	}
+	
+	@Test
+	public void testGetHeaderWithInjectNulls() throws NoSuchMethodException, SecurityException{
+		Method method = TestRest.class.getMethod("method11", ArgHeader.class);
+		
+		ArgHeader<String> args = new ArgHeader<String>();
+		args.add("name", "value");
+		
+		HeadersInjectRequest headersInjectRequest = new HeadersInjectRequest(){
+
+			@Override
+			public Map<String, String> header() {
+				return null;
+			}
+			
+		};
+		
+		Map<String, HeadersInjectRequest> requests = new HashMap<String, HeadersInjectRequest>();
+		requests.put("header1", headersInjectRequest);
+		
+		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args}, requests);
+		Assert.assertNotNull(processRest.getArgHeaders());
+		Assert.assertEquals(1, processRest.getArgHeaders().size());
+		
+		//----
+		headersInjectRequest = new HeadersInjectRequest(){
+
+			@Override
+			public Map<String, String> header() {
+				Map<String, String> header = new HashMap<String, String>();
+				header.put("inject", null);
+				header.put("inject2", "");
+				return header;
+			}
+			
+		};
+		
+		requests = new HashMap<String, HeadersInjectRequest>();
+		requests.put("header1", headersInjectRequest);
+		
+		processRest = new ProcessRest(HOST, method, new Object[]{args}, requests);
+		Assert.assertNotNull(processRest.getArgHeaders());
+		Assert.assertEquals(1, processRest.getArgHeaders().size());
+		
+		
+	}
+	
+	@Test
+	public void testGetHeaderWithInject() throws NoSuchMethodException, SecurityException{
+		Method method = TestRest.class.getMethod("method11", ArgHeader.class);
+		
+		ArgHeader<String> args = new ArgHeader<String>();
+		args.add("name", "value");
+		
+		HeadersInjectRequest headersInjectRequest = new HeadersInjectRequest(){
+
+			@Override
+			public Map<String, String> header() {
+				
+				Map<String, String> header = new HashMap<String, String>();
+				header.put("inject", "true");
+				header.put("name", "value2");
+				
+				return header;
+			}
+			
+		};
+		
+		Map<String, HeadersInjectRequest> requests = new HashMap<String, HeadersInjectRequest>();
+		requests.put("header1", headersInjectRequest);
+		
+		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args}, requests);
+		Assert.assertNotNull(processRest.getArgHeaders());
+		Assert.assertEquals(2, processRest.getArgHeaders().size());
+		Assert.assertEquals("true", processRest.getArgHeaders().get("inject").toString());
+		Assert.assertEquals("value", processRest.getArgHeaders().get("name").toString());
+	}
+	
+	
 	
 	@Test(expected=InvalidArgHeaderException.class)
 	public void testGetHeaderInvalid() throws NoSuchMethodException, SecurityException{
@@ -70,7 +166,7 @@ public class ProcessRestTest {
 		ArgHeader<String> args = new ArgHeader<String>();
 		args.add("name", "value");
 		
-		new ProcessRest(HOST, method, new Object[]{args, args});
+		new ProcessRest(HOST, method, new Object[]{args, args}, null);
 	}
 	
 	@Test
@@ -80,7 +176,7 @@ public class ProcessRestTest {
 		ArgHeader<String> args = new ArgHeader<String>();
 		args.add("name", "value");
 		
-		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args});
+		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args}, null);
 		Assert.assertNotNull(processRest.getArgHeaders());
 		Assert.assertEquals(1, processRest.getArgHeaders().size());
 	}
@@ -92,7 +188,7 @@ public class ProcessRestTest {
 		ArgQueryParam<String> args = new ArgQueryParam<String>();
 		args.add("name", "value");
 		
-		new ProcessRest(HOST, method, new Object[]{args, args});
+		new ProcessRest(HOST, method, new Object[]{args, args}, null);
 	}
 	
 	@Test
@@ -102,7 +198,7 @@ public class ProcessRestTest {
 		ArgQueryParam<String> args = new ArgQueryParam<String>();
 		args.add("name", "value");
 		
-		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args});
+		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args}, null);
 		Assert.assertNotNull(processRest.getQueryParams());
 		Assert.assertEquals(1, processRest.getQueryParams().size());
 	}
@@ -112,7 +208,7 @@ public class ProcessRestTest {
 		Method method = TestRest.class.getMethod("method8", ArgEntity.class);
 		
 		ArgEntity<String> nome = new ArgEntity<String>("value");
-		new ProcessRest(HOST, method, new Object[]{nome, nome});
+		new ProcessRest(HOST, method, new Object[]{nome, nome}, null);
 	}
 	
 	@Test(expected=InvalidArgEntityException.class)
@@ -120,7 +216,7 @@ public class ProcessRestTest {
 		Method method = TestRest.class.getMethod("method7", ArgEntity.class);
 		
 		ArgEntity<String> nome = new ArgEntity<String>("value");
-		new ProcessRest(HOST, method, new Object[]{nome, nome});
+		new ProcessRest(HOST, method, new Object[]{nome, nome}, null);
 	}
 	
 	@Test(expected=InvalidArgEntityException.class)
@@ -128,7 +224,7 @@ public class ProcessRestTest {
 		Method method = TestRest.class.getMethod("method6", ArgEntity.class, ArgEntity.class);
 		
 		ArgEntity<String> nome = new ArgEntity<String>("value");
-		new ProcessRest(HOST, method, new Object[]{nome, nome});
+		new ProcessRest(HOST, method, new Object[]{nome, nome}, null);
 	}
 	
 	@Test(expected=InvalidArgEntityException.class)
@@ -136,7 +232,7 @@ public class ProcessRestTest {
 		Method method = TestRest.class.getMethod("method6", ArgEntity.class, ArgEntity.class);
 		
 		ArgEntity<String> nome = new ArgEntity<String>("value");
-		new ProcessRest(HOST, method, new Object[]{nome});
+		new ProcessRest(HOST, method, new Object[]{nome}, null);
 	}
 	
 	@Test
@@ -145,7 +241,7 @@ public class ProcessRestTest {
 		
 		ArgEntity<String> nome = new ArgEntity<String>("value");
 		
-		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{nome});
+		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{nome}, null);
 		
 		Assert.assertTrue(processRest.getEntity().getBody() instanceof String);
 		Assert.assertEquals("value", processRest.getEntity().getBody());
@@ -155,10 +251,10 @@ public class ProcessRestTest {
 	public void testLink() throws NoSuchMethodException, SecurityException{
 		Method method = TestRest.class.getMethod("method1");
 		
-		ProcessRest processRest = new ProcessRest(HOST, method, null);
+		ProcessRest processRest = new ProcessRest(HOST, method, null, null);
 		Assert.assertEquals(HOST.concat("/method1"), processRest.getLink());
 		
-		processRest = new ProcessRest(HOST2, method, null);
+		processRest = new ProcessRest(HOST2, method, null, null);
 		Assert.assertEquals(HOST.concat("/method1"), processRest.getLink());
 	}
 	
@@ -166,10 +262,10 @@ public class ProcessRestTest {
 	public void testLink2() throws NoSuchMethodException, SecurityException{
 		Method method = TestRest.class.getMethod("method2");
 		
-		ProcessRest processRest = new ProcessRest(HOST, method, null);
+		ProcessRest processRest = new ProcessRest(HOST, method, null, null);
 		Assert.assertEquals(HOST.concat("/method2"), processRest.getLink());
 		
-		processRest = new ProcessRest(HOST2, method, null);
+		processRest = new ProcessRest(HOST2, method, null, null);
 		Assert.assertEquals(HOST.concat("/method2"), processRest.getLink());
 	}
 	
@@ -177,10 +273,10 @@ public class ProcessRestTest {
 	public void testLink3() throws NoSuchMethodException, SecurityException{
 		Method method = TestRest.class.getMethod("method3");
 		
-		ProcessRest processRest = new ProcessRest(HOST, method, null);
+		ProcessRest processRest = new ProcessRest(HOST, method, null, null);
 		Assert.assertEquals(HOST.concat("/"), processRest.getLink());
 		
-		processRest = new ProcessRest(HOST2, method, null);
+		processRest = new ProcessRest(HOST2, method, null, null);
 		Assert.assertEquals(HOST.concat("/"), processRest.getLink());
 	}
 	
@@ -192,7 +288,7 @@ public class ProcessRestTest {
 		args.add("id");
 		args.add("login");
 		
-		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args});
+		ProcessRest processRest = new ProcessRest(HOST, method, new Object[]{args}, null);
 		Assert.assertEquals(HOST.concat("/method4/id/login"), processRest.getLink());
 	}
 	
@@ -203,7 +299,7 @@ public class ProcessRestTest {
 		ArgPathParam<String> args = new ArgPathParam<String>();
 		args.add("id");
 		
-		new ProcessRest(HOST, method, new Object[]{args});
+		new ProcessRest(HOST, method, new Object[]{args}, null);
 	}
 	
 	@Test(expected=InvalidArgsPathParamException.class)
@@ -215,6 +311,6 @@ public class ProcessRestTest {
 		args.add("id");
 		args.add("id");
 		
-		new ProcessRest(HOST, method, new Object[]{args});
+		new ProcessRest(HOST, method, new Object[]{args}, null);
 	}
 }

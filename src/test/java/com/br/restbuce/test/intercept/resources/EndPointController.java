@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +41,12 @@ public class EndPointController {
 	@ResponseBody
 	public String testErro(){
 		throw new NotFoundTestException();
+	}
+	
+	@RequestMapping(value = "/endpoint4", method = { RequestMethod.GET })
+	@ResponseBody
+	public String testQuery(@RequestParam(value="field") String field){
+		return field;
 	}
 	
 }

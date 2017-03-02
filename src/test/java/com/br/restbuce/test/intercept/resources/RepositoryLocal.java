@@ -5,6 +5,7 @@ import org.springframework.http.HttpMethod;
 import com.br.restbuce.annotations.Rest;
 import com.br.restbuce.args.ArgEntity;
 import com.br.restbuce.args.ArgPathParam;
+import com.br.restbuce.args.ArgQueryParam;
 import com.br.restbuce.repository.RestRepository;
 import com.br.restbuce.test.intercept.bean.Nome;
 
@@ -24,5 +25,8 @@ public interface RepositoryLocal extends RestRepository {
 	
 	@Rest(endPoint="/endpoint-test-error-404", method=HttpMethod.GET)
 	String test5();
+	
+	@Rest(endPoint="/endpoint4", method=HttpMethod.GET)
+	String test6(ArgQueryParam<String> args);
 	
 }

@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import com.br.restbuce.annotations.Rest;
+import com.br.restbuce.component.HeadersInjectRequest;
 
 @SuppressWarnings("rawtypes")
 public class ProcessRest implements ProcessExecute<ResponseEntity>{
@@ -27,11 +28,13 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 	private HttpHeaders headers = new HttpHeaders();
 	private Map<String, Object> queryParams;
 	private Map<String, Object> argHeaders;
+	private Map<String, HeadersInjectRequest> headersInjectRequest;
 	
-	public ProcessRest(String host, Method method, Object[] args) {
+	public ProcessRest(String host, Method method, Object[] args, Map<String, HeadersInjectRequest> headersInjectRequest) {
 		this.host = host;
 		this.method = method;
 		this.args = args;
+		this.headersInjectRequest = headersInjectRequest;
 		
 		getAnnotationRest();
 		processReturn();
@@ -39,6 +42,16 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 		processEntity();
 		processQueryparam();
 		processHeader();
+		processHeaderInject();
+	}
+
+	@Override
+	public ResponseEntity execute() {
+		return new ProcessSend(this).execute();
+	}
+	
+	private void processHeaderInject() {
+		new ProcessHeaderInject(headersInjectRequest, argHeaders).execute();
 	}
 
 	private void processHeader() {
@@ -46,8 +59,9 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 	}
 
 	private void processQueryparam() {
-		queryParams = new ProcessQueryParam(args).execute();
-		
+		ProcessQueryParam processQueryParam = new ProcessQueryParam(args, link); 
+		link = processQueryParam.execute();
+		queryParams = processQueryParam.getQueryParams();
 	}
 
 	private void processEntity() {
@@ -55,7 +69,7 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 	}
 
 	private void processLink() {
-		link = new ProcessLink(host, rest, args).execute();
+		link = new ProcessLink(host, rest, args, method).execute();
 	}
 
 	private void getAnnotationRest() {
@@ -90,9 +104,6 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 		return argHeaders;
 	}
 
-	@Override
-	public ResponseEntity execute() {
-		return new ProcessSend(this).execute();
-	}
+	
 
 }

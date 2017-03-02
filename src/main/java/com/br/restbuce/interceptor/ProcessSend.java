@@ -30,15 +30,9 @@ public class ProcessSend implements ProcessExecute<ResponseEntity> {
 
 		RestTemplate restTemplate = new RestTemplate();
 
-		if (processRest.getQueryParams() != null) {
-			return restTemplate.exchange(processRest.getLink(),
-					processRest.getHttpMethod(), processRest.getEntity(),
-					processRest.getClassReturn(), processRest.getQueryParams());
-		} else {
-			return restTemplate.exchange(processRest.getLink(),
-					processRest.getHttpMethod(), processRest.getEntity(),
-					processRest.getClassReturn());
-		}
+		return restTemplate.exchange(processRest.getLink(),
+				processRest.getHttpMethod(), processRest.getEntity(),
+				processRest.getClassReturn());
 	}
 
 }
