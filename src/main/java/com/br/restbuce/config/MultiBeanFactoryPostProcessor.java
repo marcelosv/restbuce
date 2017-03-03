@@ -14,7 +14,7 @@ public class MultiBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 	
 	@SuppressWarnings("rawtypes")
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-
+		
 		BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 		Map<String, MultiBeanFactory> factories = beanFactory
 				.getBeansOfType(MultiBeanFactory.class);
@@ -30,7 +30,7 @@ public class MultiBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 				String nameBean = itemString[1];
 
 				BeanDefinition definition = BeanDefinitionBuilder
-						.genericBeanDefinition(factoryBean.getObjectType())
+						.genericBeanDefinition(item.getClass())
 						.setScope(BeanDefinition.SCOPE_SINGLETON)
 						.setFactoryMethod("getObject")
 						.addConstructorArgValue(name).getBeanDefinition();
@@ -40,6 +40,7 @@ public class MultiBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 			}
 		}
+		
 	}
 	
 }

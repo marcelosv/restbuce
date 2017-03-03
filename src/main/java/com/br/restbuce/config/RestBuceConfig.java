@@ -7,10 +7,11 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.reflections.Reflections;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -21,11 +22,12 @@ import com.br.restbuce.interceptor.RestClass;
 import com.br.restbuce.repository.RestRepository;
 
 @Configuration
-@EnableAutoConfiguration
-@ImportAutoConfiguration(value={RestClass.class, ContextStatic.class})
+@ImportAutoConfiguration(value={ContextStatic.class})
 public class RestBuceConfig {
 
 	@Bean
+	@Primary
+	@Order(0)
 	public MultiBeanFactoryPostProcessor msdultiBeanFactoryPostProcessor() {
 		return new MultiBeanFactoryPostProcessor();
 	}
@@ -35,7 +37,7 @@ public class RestBuceConfig {
 		Resource resource = new ClassPathResource("application.properties");
 		Properties props = PropertiesLoaderUtils.loadProperties(resource);
 		String restPath = (String) props.get("restbuce.pathscan");
-	
+		
 		return new MultiBeanFactory<RestRepository>() {
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -59,6 +61,7 @@ public class RestBuceConfig {
 
 				Collection<String[]> itens = new ArrayList<String[]>(classes.size());
 				for (Class item : classes) {
+					
 					if( item.isAnnotationPresent(IgnoreRest.class) ){
 						continue;
 					}

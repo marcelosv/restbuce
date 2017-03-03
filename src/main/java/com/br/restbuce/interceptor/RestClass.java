@@ -11,6 +11,10 @@ import com.br.restbuce.repository.RestRepository;
 
 public class RestClass {
 
+	private RestClass() {
+		
+	}
+	
 	public static Object create(Class<? extends RestRepository> interfaceClass){
 		
 		Object robot = (RestRepository) java.lang.reflect.Proxy.newProxyInstance(
@@ -26,6 +30,10 @@ public class RestClass {
 	            public Object invoke(Object proxy, java.lang.reflect.Method method, Object[] args) throws java.lang.Throwable {
 					ApplicationContext staticContext = ContextStatic.getStaticContext();
 
+					if( "hashCode".equals(method.getName()) || "equals".equals(method.getName())){
+						return 0;
+					}
+					
 					Map<String, HeadersInjectRequest> headersInjectRequest = staticContext.getBeansOfType(HeadersInjectRequest.class);
 					String host = staticContext.getEnvironment().getProperty("restbuce.server");
 					
