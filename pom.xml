@@ -8,6 +8,13 @@
 	<version>1.2017.1.1</version>
 	<name>restbuce</name>
 
+ 	<developers>
+        <developer>
+        	<name>Marcelo de Souza Vieira</name>
+            <email>marcelosouzav@gmail.com</email>
+        </developer>
+    </developers>
+    
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-starter-parent</artifactId>
