@@ -21,18 +21,19 @@ import com.br.restbuce.interceptor.ContextStatic;
 import com.br.restbuce.interceptor.RestClass;
 import com.br.restbuce.repository.RestRepository;
 
-@Configuration
+@Configuration(value="configRestBuce")
 @ImportAutoConfiguration(value={ContextStatic.class})
 public class RestBuceConfig {
 
 	@Bean
 	@Primary
-	@Order(0)
-	public MultiBeanFactoryPostProcessor msdultiBeanFactoryPostProcessor() {
+	@Order(-2147483598)
+	public MultiBeanFactoryPostProcessor _1newBean() {
 		return new MultiBeanFactoryPostProcessor();
 	}
 	
 	@Bean
+	@Order(-2147483598)
 	public MultiBeanFactory<RestRepository> personFactory() throws IOException {
 		Resource resource = new ClassPathResource("application.properties");
 		Properties props = PropertiesLoaderUtils.loadProperties(resource);
