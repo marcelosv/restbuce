@@ -13,7 +13,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 public class MultiBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+	private final static Logger LOG = LoggerFactory.getLogger(MultiBeanFactoryPostProcessor.class);
 
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -43,7 +43,10 @@ public class MultiBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 				definition.setFactoryBeanName(entry.getKey());
 				registry.registerBeanDefinition(nameBean, definition);
 				
-				LOG.info("RestBuce registre new Bean : ".concat(name));
+				if( LOG.isInfoEnabled() ){
+					LOG.info("RestBuce registre new Bean : ".concat(name));
+				}
+				
 			}
 		}
 
