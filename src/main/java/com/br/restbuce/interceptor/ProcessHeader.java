@@ -1,6 +1,8 @@
 package com.br.restbuce.interceptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
@@ -31,7 +33,10 @@ public class ProcessHeader extends ProcessAbstract implements ProcessExecute<Map
 		}
 		
 		for (String key : argHeader.getEntity().keySet()) {
-			headers.put(key, headers.get(key));
+			List<String> list = new ArrayList<String>();
+			list.add(argHeader.getEntity().get(key).toString());
+			
+			headers.put(key, list);
 		}
 		
 		return argHeader.getEntity();
