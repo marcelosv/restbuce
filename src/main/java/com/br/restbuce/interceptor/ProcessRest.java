@@ -29,6 +29,7 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 	private Map<String, Object> queryParams;
 	private Map<String, Object> argHeaders;
 	private Map<String, HeadersInjectRequest> headersInjectRequest;
+	private String nameMicroService;
 	
 	public ProcessRest(String host, Method method, Object[] args, Map<String, HeadersInjectRequest> headersInjectRequest) {
 		this.host = host;
@@ -69,7 +70,10 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 	}
 
 	private void processLink() {
-		link = new ProcessLink(host, rest, args, method).execute();
+		String[] nLink = new ProcessLink(host, rest, args, method).execute();
+		link = nLink[0];
+		
+		nameMicroService = nLink.length > 1 ? nLink[1] : ""; 
 	}
 
 	private void getAnnotationRest() {
@@ -102,6 +106,10 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 
 	public Map<String, Object> getArgHeaders() {
 		return argHeaders;
+	}
+
+	public String getNameMicroService() {
+		return nameMicroService;
 	}
 
 	

@@ -2,12 +2,14 @@ package com.br.restbuce.interceptor;
 
 import java.lang.reflect.Method;
 
+import org.springframework.util.StringUtils;
+
 import com.br.restbuce.annotations.ExternalRest;
 import com.br.restbuce.annotations.Rest;
 import com.br.restbuce.args.ArgPathParam;
 import com.br.restbuce.exceptions.InvalidArgsPathParamException;
 
-public class ProcessLink extends ProcessAbstract implements ProcessExecute<String> {
+public class ProcessLink extends ProcessAbstract implements ProcessExecute<String[]> {
 
 	private String host;
 	private Rest rest;
@@ -22,15 +24,24 @@ public class ProcessLink extends ProcessAbstract implements ProcessExecute<Strin
 	}
 
 	@Override
-	public String execute() {
+	public String[] execute() {
 		
 		if( isExternalRest() ){
-			return pŕocessExternalRest();
+			return new String[]{pŕocessExternalRest()};
 		}
 		
 		String link = processLink();
-		return processArgs(link);
-	}
+		String nLink = processArgs(link);
+		
+		String[] linkSep = rest.endPoint().split("/");
+		if( !StringUtils.isEmpty(linkSep[0]) ){
+			return new String[]{nLink, linkSep[0]};
+		}else if( linkSep.length > 1  ){
+			return new String[]{nLink, linkSep[1]};
+		}
+		
+		return new String[]{nLink}; 
+	} 
 
 	private String pŕocessExternalRest() {
 		return rest.endPoint();
