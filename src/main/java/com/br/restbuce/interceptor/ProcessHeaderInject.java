@@ -3,6 +3,7 @@ package com.br.restbuce.interceptor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
@@ -56,12 +57,14 @@ public class ProcessHeaderInject implements ProcessExecute<Map<String, Object>> 
 			
 		}
 		
-		
-		for (String key : argHeaders.keySet()) {
-			List<String> list = new ArrayList<String>();
-			list.add(argHeaders.get(key).toString());
+		for (Entry<String, Object> key : argHeaders.entrySet()) {
 			
-			headers.put(key, list);
+			Object value = key.getValue();
+			
+			List<String> list = new ArrayList<String>();
+			list.add(value.toString());
+			
+			headers.put(key.getKey(), list);
 		}
 		
 		return argHeaders;

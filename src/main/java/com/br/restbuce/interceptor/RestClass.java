@@ -1,6 +1,7 @@
 package com.br.restbuce.interceptor;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +54,8 @@ public class RestClass {
 						// interceo
 						Map<String, InterceptNameMicroserviceRequest> interceptNameMicroserviceRequest = (Map<String, InterceptNameMicroserviceRequest>) staticContext.getBeansOfType(InterceptNameMicroserviceRequest.class);
 						if( interceptNameMicroserviceRequest != null ){
-							for( String key : interceptNameMicroserviceRequest.keySet() ){
-								interceptNameMicroserviceRequest.get(key).execute(processRest.getNameMicroService(), processRest.getLink());
+							for( Entry<String, InterceptNameMicroserviceRequest> key : interceptNameMicroserviceRequest.entrySet() ){
+								key.getValue().execute(processRest.getNameMicroService(), processRest.getLink());
 							}
 						}
 					}

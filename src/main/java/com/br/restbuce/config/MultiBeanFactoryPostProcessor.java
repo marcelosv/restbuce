@@ -15,6 +15,7 @@ public class MultiBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void postProcessBeanFactory(
 			ConfigurableListableBeanFactory beanFactory) throws BeansException {
