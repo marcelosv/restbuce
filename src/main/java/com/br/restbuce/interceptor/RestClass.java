@@ -46,19 +46,19 @@ public class RestClass {
 					
 					LOG.debug("RestBuce exec request: " + processRest.getLink());
 					
-					ResponseEntity objectReturn = processRest.execute();
-					
-					Object returnObject = objectReturn.getBody();
-					
-					// interceo
-					Map<String, InterceptNameMicroserviceRequest> interceptNameMicroserviceRequest = (Map<String, InterceptNameMicroserviceRequest>) staticContext.getBeansOfType(InterceptNameMicroserviceRequest.class);
-					if( interceptNameMicroserviceRequest != null ){
-						for( String key : interceptNameMicroserviceRequest.keySet() ){
-							interceptNameMicroserviceRequest.get(key).execute(processRest.getNameMicroService(), processRest.getLink());
+					try{
+						ResponseEntity objectReturn = processRest.execute();
+						return objectReturn.getBody();
+					}finally{
+						// interceo
+						Map<String, InterceptNameMicroserviceRequest> interceptNameMicroserviceRequest = (Map<String, InterceptNameMicroserviceRequest>) staticContext.getBeansOfType(InterceptNameMicroserviceRequest.class);
+						if( interceptNameMicroserviceRequest != null ){
+							for( String key : interceptNameMicroserviceRequest.keySet() ){
+								interceptNameMicroserviceRequest.get(key).execute(processRest.getNameMicroService(), processRest.getLink());
+							}
 						}
 					}
 					
-					return returnObject;
 	            }
 	        });
 		

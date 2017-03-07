@@ -1,5 +1,6 @@
 package com.br.restbuce.interceptor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
@@ -26,7 +27,7 @@ public class ProcessHeader extends ProcessAbstract implements ProcessExecute<Map
 		ArgHeader<Object> argHeader = (ArgHeader) getArg(ArgHeader.class, args);
 		
 		if( argHeader == null ){
-			return null;
+			return new HashMap<String, Object>();
 		}
 		
 		for (String key : argHeader.getEntity().keySet()) {

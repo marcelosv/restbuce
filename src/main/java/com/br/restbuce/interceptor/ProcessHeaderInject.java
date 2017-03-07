@@ -1,7 +1,10 @@
 package com.br.restbuce.interceptor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 
 import com.br.restbuce.component.HeadersInjectRequest;
@@ -10,12 +13,14 @@ public class ProcessHeaderInject implements ProcessExecute<Map<String, Object>> 
 
 	private Map<String, HeadersInjectRequest> headersInjectRequest;
 	private Map<String, Object> argHeaders;
+	private HttpHeaders headers;
 
 	public ProcessHeaderInject(
 			Map<String, HeadersInjectRequest> headersInjectRequest,
-			Map<String, Object> argHeaders) {
+			Map<String, Object> argHeaders, HttpHeaders headers) {
 				this.headersInjectRequest = headersInjectRequest;
 				this.argHeaders = argHeaders;
+				this.headers = headers;
 	}
 
 	/**
@@ -49,6 +54,14 @@ public class ProcessHeaderInject implements ProcessExecute<Map<String, Object>> 
 				argHeaders.put(keyHeader, value);
 			}
 			
+		}
+		
+		
+		for (String key : argHeaders.keySet()) {
+			List<String> list = new ArrayList<String>();
+			list.add(argHeaders.get(key).toString());
+			
+			headers.put(key, list);
 		}
 		
 		return argHeaders;

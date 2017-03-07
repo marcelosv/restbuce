@@ -40,10 +40,10 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 		getAnnotationRest();
 		processReturn();
 		processLink();
-		processEntity();
 		processQueryparam();
 		processHeader();
 		processHeaderInject();
+		processEntity();
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ProcessRest implements ProcessExecute<ResponseEntity>{
 	}
 	
 	private void processHeaderInject() {
-		new ProcessHeaderInject(headersInjectRequest, argHeaders).execute();
+		new ProcessHeaderInject(headersInjectRequest, argHeaders, headers).execute();
 	}
 
 	private void processHeader() {
