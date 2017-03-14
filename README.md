@@ -1,7 +1,7 @@
 # RestBuce
 
 RestBuce is component for easy consumer rest in environment microservice.
-You can create interface for consumer Rest with create implementation.
+You can create interface for consumer Rest without create implementation.
 
 ## Example
 
