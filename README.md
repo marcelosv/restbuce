@@ -6,7 +6,7 @@ You can create interface for consumer Rest with create implementation.
 ## Example
 
 ```java
-// You can create interface for consumer Rest with create implementation
+// You can create interface for consumer Rest without create implementation
 public interface MyRepoRest extends RestRepository {
     @Rest(endPoint="/endpoint1", method=HttpMethod.GET)
 	String endpoint1();
